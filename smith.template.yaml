@@ -1,0 +1,65 @@
+package: @RPM@
+# mock uses the nss libraries
+nss: true
+# mock must start running as root
+root: true
+# mock requires a high uid/gid to when creating the rootfs
+user: 1000:1000
+# mock requires the mock group to be created
+groups:
+- mock
+mock:
+  deps:
+  - mock
+  - pigz
+paths:
+- /usr/bin/smith
+- /usr/libexec/mock/mock
+- /usr/bin/pigz
+- /etc/mock/logging.ini
+# certs and libraries for https validation
+- /etc/pki/tls/certs/ca-bundle.crt
+- /etc/pki/nssdb/
+- /lib64/libnss*
+# mock is written in python
+- /usr/bin/python
+- /usr/lib64/python2.7/
+- /usr/lib/python2.7/site-packages/
+# mock checks release files
+- /etc/os-release
+- /etc/system-release
+# yum uses librpm which requires the rpmrc and macros
+- /usr/lib/rpm/rpmrc
+- /usr/lib/rpm/macros
+# part of libfreebl3 was split into a separate
+# package that is dynamically loaded
+- /lib64/libfreeblpriv3.so
+- /lib64/libfreeblpriv3.chk
+# requires dynamic libsoftokn
+- /lib64/libsoftokn3.so
+- /lib64/libsoftokn3.chk
+# mock binary dependencies follow
+# mock executes some commands with shell=true
+- /bin/sh
+# mock requires yum and supporting files
+- /usr/bin/yum
+- /usr/libexec/urlgrabber-ext-down
+- /usr/bin/yum-builddep
+- /usr/bin/repoquery
+- /usr/share/yum-cli
+# mock requires createrepo
+- /usr/bin/createrepo_c
+# root cache plugin requires sync and tar
+- /usr/bin/sync
+- /usr/bin/tar
+- /usr/bin/stat
+# mock needs to mount directories
+- /bin/mount
+- /bin/umount
+dir: /write
+env:
+  # mock drops to a regular user based on env vars
+  - SUDO_UID=1000
+  - SUDO_GID=1000
+entrypoint:
+- /usr/bin/smith
