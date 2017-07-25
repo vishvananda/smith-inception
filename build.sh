@@ -1,6 +1,6 @@
 #!/bin/bash
-git submodule update --init
-VERSION=1.1.1
+git submodule update --init --remote
+VERSION=$(cd smith && make version)
 (cd smith && make rpm/SOURCES/smith-${VERSION}.tar.gz)
 (cd smith && make rpm/SPECS/smith.spec)
 docker run -it --privileged -v $PWD:/write -v mock:/var/lib/mock -v cache:/var/cache --rm --entrypoint /usr/bin/mock vishvananda/smith \
